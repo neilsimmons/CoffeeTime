@@ -32,10 +32,11 @@
  local email_body = ""  
  local count = 0  
  local smtp_socket = nil -- will be used as socket to email server  
- -- The display() function will be used to print the SMTP server's response  
- function display(sck,response)  
+ -- The received() function will be used to print the SMTP server's response and trigger the do_next() function
+ function received(sck,response)  
     print("Got a response: ")  
-    print(response)  
+    print(response)
+    do_next() 
  end  
  -- The do_next() function is used to send the SMTP commands to the SMTP server in the required sequence.  
  -- I was going to use socket callbacks but the code would not run callbacks after the first 3.  
@@ -80,12 +81,10 @@
        end  
  end  
  -- The connected() function is executed when the SMTP socket is connected to the SMTP server.  
- -- This function will create a timer to call the do_next function which will send the SMTP commands  
- -- in sequence, one by one, every 5000 seconds.   
- -- You can change the time to be smaller if that works for you, I used 5000ms just because.  
+ -- This function will start the email process and then it will get picked up by the received() function
  function connected(sck)  
-   print("Connected - Starting Timer")  
-   tmr.alarm(0,5000,1,do_next)  
+   print("Connected")  
+   do_next()
  end  
  -- @name send_email  
  -- @description Will initiated a socket connection to the SMTP server and trigger the connected() function  
@@ -98,7 +97,7 @@
     print ("Open Connection")  
     smtp_socket = net.createConnection(net.TCP,1)  
     smtp_socket:on("connection",connected)  
-    smtp_socket:on("receive",display)  
+    smtp_socket:on("receive",received)  
     smtp_socket:connect(SMTP_PORT,SMTP_SERVER)  
  end   
   
