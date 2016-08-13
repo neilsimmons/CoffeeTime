@@ -33,10 +33,27 @@
  local count = 0  
  local smtp_socket = nil -- will be used as socket to email server  
  -- The received() function will be used to print the SMTP server's response and trigger the do_next() function
+ local retry = 3
  function received(sck,response)  
     print("Got a response: ")  
     print(response)
-    do_next() 
+    local CompletionCode = response:sub(1,3) + 0
+    if CompletionCode < 400 then
+        do_next()
+    else
+        if retry > 0 then
+            print(smtp_socket:getpeer())
+            if smtp_socket:getpeer() then
+                smtp_socket:send("QUIT\r\n")
+                smtp_socket:close()
+            end
+            retry = retry - 1
+            send_email(email_subject,email_body)  
+
+        else
+            print("Unable To Send Email")
+        end
+    end
  end  
  -- The do_next() function is used to send the SMTP commands to the SMTP server in the required sequence.  
  -- I was going to use socket callbacks but the code would not run callbacks after the first 3.  
@@ -74,10 +91,12 @@
          smtp_socket:send(message.."\r\n.\r\n")  
        elseif(count==8) then  
          count = count+1  
-          tmr.stop(0)  
           smtp_socket:send("QUIT\r\n")  
-       else  
-         smtp_socket:close()  
+       else
+         print("Closing socket")
+         smtp_socket:close()
+         smtp_socket = nil
+         print("Socket Closed")
        end  
  end  
  -- The connected() function is executed when the SMTP socket is connected to the SMTP server.  
