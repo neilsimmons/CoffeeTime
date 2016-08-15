@@ -1,7 +1,7 @@
 function OnButtonPush()
     gpio.trig(2, "down", DoNothing)
     CoffeeTime()
-    if not tmr.alarm(6, 60000, tmr.ALARM_SINGLE, function()
+    if not tmr.alarm(timers.ButtonDebounce, 60000, tmr.ALARM_SINGLE, function()
                                         gpio.trig(2, "down", OnButtonPush)
                                         print("Button Armed")
                                       end

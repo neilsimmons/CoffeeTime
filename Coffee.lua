@@ -51,7 +51,7 @@ function CoffeeTime()
     send_email("Coffee was brewed","Someone just pressed the brewed coffee button")
     SetLights("00000")
     
-    if not tmr.alarm(1, 60000, tmr.ALARM_AUTO, function()
+    if not tmr.alarm(timers.Coffee, 60000, tmr.ALARM_AUTO, function()
                                                     CurrentString = string.format("%05d", (Current + Sequence[Step]))
                                                     Step = Step + 1
                                                     if Step > 15 then
@@ -64,7 +64,7 @@ function CoffeeTime()
                                                     SetLights(CurrentString)
                                                     Minutes = Minutes + 1
                                                     if Minutes == StartMinutes then
-                                                        tmr.stop(1)
+                                                        tmr.stop(timers.Coffee)
                                                     end
                                                end
                                               ) 

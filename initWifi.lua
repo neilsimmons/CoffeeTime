@@ -1,12 +1,9 @@
-function initWifi(OnInit)
+function initWifi(OnInit,ApNotFound)
     wifi.sta.eventMonReg(wifi.STA_GOTIP,OnInit)
+    wifi.sta.eventMonReg(wifi.STA_APNOTFOUND,ApNotFound)
     wifi.sta.eventMonStart()
+    wifi.setphymode(wifi.PHYMODE_G)
     wifi.setmode(wifi.STATION)
     wifi.sta.config(GlobalConfig.WifiSsid,GlobalConfig.WifiPassword)
-    --cfg={
-    --ssid=GlobalConfig.LocalWifiSsid,
-    --pwd=GlobalConfig.LocalWifiPassword,
-    --auth=AUTH_WPA2_PSK
-    --}
-    --wifi.ap.config(cfg)
+    wifi.sleeptype(wifi.LIGHT_SLEEP)
 end
