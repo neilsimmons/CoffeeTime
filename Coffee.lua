@@ -41,20 +41,20 @@ function SetLights(code)
 end
 --SetLights("66666")
 function CoffeeTime()
-    StartMinutes = 90
+    StartMinutes = 180
     Minutes = 0
     Current = 0
     Step = 1
-    Sequence = {10000, 01000, 00100, 00010, 00001, 10001, 01001, 00101, 00011, 10011, 01011, 00111, 10111, 01111, 11111}
+    Sequence = {10000, 11000, 11100, 11110, 11111}
 
     print ("Coffee Timer Started")
     send_email("Coffee was brewed","Someone just pressed the brewed coffee button")
     SetLights("00000")
     
-    if not tmr.alarm(timers.Coffee, 60000, tmr.ALARM_AUTO, function()
+    if not tmr.alarm(timers.Coffee, 360000, tmr.ALARM_AUTO, function()
                                                     CurrentString = string.format("%05d", (Current + Sequence[Step]))
                                                     Step = Step + 1
-                                                    if Step > 15 then
+                                                    if Step > 5 then
                                                         Current = Current + Sequence[Step-1];
                                                         Step = 1
                                                     end
@@ -62,7 +62,7 @@ function CoffeeTime()
                                                     print(Step)
                                                     print(CurrentString)
                                                     SetLights(CurrentString)
-                                                    Minutes = Minutes + 1
+                                                    Minutes = Minutes + 6
                                                     if Minutes == StartMinutes then
                                                         tmr.stop(timers.Coffee)
                                                     end
