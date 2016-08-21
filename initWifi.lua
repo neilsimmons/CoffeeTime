@@ -5,5 +5,5 @@ function initWifi(OnInit,ApNotFound)
     wifi.setphymode(wifi.PHYMODE_G)
     wifi.setmode(wifi.STATION)
     wifi.sta.config(GlobalConfig.WifiSsid,GlobalConfig.WifiPassword)
-    wifi.sleeptype(wifi.LIGHT_SLEEP)
+    --wifi.sleeptype(wifi.LIGHT_SLEEP)
 end

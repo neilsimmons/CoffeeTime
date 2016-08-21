@@ -1,7 +1,7 @@
 function OneLightFlashing(FlashDelay)
-    tmr.unregister(5)
+    tmr.unregister(timers.OneLightFlash)
     lightOn = true
-    if not tmr.alarm(5, FlashDelay, tmr.ALARM_AUTO, function()
+    if not tmr.alarm(timers.OneLightFlash, FlashDelay, tmr.ALARM_AUTO, function()
                                                 if lightOn then
                                                     
                                                     lightOn = false
@@ -19,7 +19,7 @@ function OneLightFlashing(FlashDelay)
 end
 
 function NoLights()
-    tmr.unregister(5)
+    tmr.unregister(timers.OneLightFlash)
 end
 
 function SetLights(code)
@@ -46,12 +46,16 @@ function CoffeeTime()
     Current = 0
     Step = 1
     Sequence = {10000, 11000, 11100, 11110, 11111}
+    LastString = "10000"
+    CurrentString = "00000"
+    LightState = CurrentString
 
     print ("Coffee Timer Started")
-    send_email("Coffee was brewed","Someone just pressed the brewed coffee button")
-    SetLights("00000")
-    
+    send_email("Coffee was brewed","Someone just pressed the brewed coffee button",GlobalConfig.EmailRecipientList)
+    SetLights(CurrentString)
+
     if not tmr.alarm(timers.Coffee, 360000, tmr.ALARM_AUTO, function()
+                                                    LastString = CurrentString
                                                     CurrentString = string.format("%05d", (Current + Sequence[Step]))
                                                     Step = Step + 1
                                                     if Step > 5 then
@@ -61,16 +65,28 @@ function CoffeeTime()
                                                     print(Current)
                                                     print(Step)
                                                     print(CurrentString)
-                                                    SetLights(CurrentString)
                                                     Minutes = Minutes + 6
                                                     if Minutes == StartMinutes then
                                                         tmr.stop(timers.Coffee)
                                                     end
                                                end
-                                              ) 
+                                              )
     then
         print("Coffee Timer failed")
     end
+
+    if not tmr.alarm(timers.Flash, 500, tmr.ALARM_AUTO, function()
+                                                            if (LightState == CurrentString) then
+                                                                SetLights(LastString)
+                                                                LightState = LastString
+                                                            else
+                                                                SetLights(CurrentString)
+                                                                LightState = CurrentString
+                                                            end
+                                                        end)
+    then
+        print("Flash Timer failed")
+    end                                                    
 
 end
 

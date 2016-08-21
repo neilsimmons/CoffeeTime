@@ -25,7 +25,7 @@
  local SMTP_SERVER = GlobalConfig.SmtpServer
  local SMTP_PORT = GlobalConfig.SmtpPort
  -- The account you want to send email to  
- local mail_to = GlobalConfig.EmailRecipientList  
+ local mail_to = "ns@geotechnic.co.uk"  
  -- These are global variables. Don't change their values  
  -- they will be changed in the functions below  
  local email_subject = ""  
@@ -76,8 +76,10 @@
          count = count+1  
          smtp_socket:send("MAIL FROM:<" .. MY_EMAIL .. ">\r\n")  
        elseif(count==5) then  
-         count = count+1  
-         smtp_socket:send("RCPT TO:<" .. mail_to ..">\r\n")  
+         count = count+1
+         for recipient in string.gmatch(mail_to,"([^,]+)") do
+            smtp_socket:send("RCPT TO:<" .. recipient ..">\r\n")
+         end  
        elseif(count==6) then  
          count = count+1  
          smtp_socket:send("DATA\r\n")  
@@ -109,10 +111,11 @@
  -- @description Will initiated a socket connection to the SMTP server and trigger the connected() function  
  -- @param subject The email's subject  
  -- @param body The email's body  
- function send_email(subject,body)  
+ function send_email(subject,body,mailto)  
     count = 0  
     email_subject = subject  
-    email_body = body  
+    email_body = body
+    mail_to = mailto
     print ("Open Connection")  
     smtp_socket = net.createConnection(net.TCP,1)  
     smtp_socket:on("connection",connected)  
