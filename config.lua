@@ -7,9 +7,11 @@ EmailAddress = "123@gmail.com", --email address to send from
 EmailPassword = "abc", --password to auth smtp with
 SmtpServer = "smtp.gmail.com", --smtp server address ip unless you have dns
 SmtpPort = "465", --port to connect to smtp on (secure)
-EmailRecipientList = "coffeeloverstestemail@gmail.com" --semicolon seperated list of recipients
+EmailRecipientList = "coffeeloverstestemail@gmail.com" --comma seperated list of recipients
 }
 timers = {
 Coffee = 1,
+Flash = 2,
+OneLightFlash = 5,
 ButtonDebounce = 6
 }
